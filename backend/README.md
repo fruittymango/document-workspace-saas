@@ -153,10 +153,10 @@ npm install
 npx prisma migrate dev
 ```
 
-4. Create required database roles.
+4. Create database models.
 
 ```bash
-npm run seed:roles
+npx prisma generate
 ```
 
 5. Seed demo data (optional).
@@ -165,7 +165,19 @@ npm run seed:roles
 npx prisma db seed
 ```
 
-6. Start the application.
+6. Create required database roles.
+
+```bash
+npm run seed:roles
+```
+
+7. Build the application.
+
+```bash
+npm run build
+```
+
+8. Run the application.
 
 ```bash
 npm run start
@@ -195,6 +207,7 @@ npm run dev            # Start development server
 npm run build          # Build application
 npm run start          # Start production server
 npm run seed:roles     # Create/update database roles
+npx prisma generate    # Create models
 npx prisma db seed     # Seed demo data
 npx prisma migrate dev
 npx prisma migrate deploy

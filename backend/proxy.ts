@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { ratelimit } from "./lib/ratelimt";
 import { validateUserJWT } from "./lib/api-guard";
 
-const ALLOWED_ORIGINS = ["https://sandbox.payfast.co.za", process.env.APP_URL];
+const ALLOWED_ORIGINS = ["sandbox.payfast.co.za", process.env.APP_URL];
 const NO_MEMBERS_ALLOWED = ["/billing", "/dashboard", "/users"];
 
 export async function proxy(request: NextRequest) {

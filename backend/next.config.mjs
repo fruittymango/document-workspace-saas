@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
-// const nextConfig = {
-  
-//   allowedDevOrigins: ["localhost:3000", "sandbox.payfast.co.za", process.env.APP_URL]
-// };
 
+const ngrokUrl = process.env.APP_URL?.replace("http://", "")
+  ?.replace("https://", "")
+  ?.trim();
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -11,8 +10,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  allowedDevOrigins: ["localhost:3000", "sandbox.payfast.co.za", process.env.APP_URL],
+  allowedDevOrigins: ["sandbox.payfast.co.za", ngrokUrl],
 };
-
 
 export default nextConfig;

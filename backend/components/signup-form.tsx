@@ -16,9 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SignupSchema } from "@/lib/schema";
+import { useAuth } from "@/context/AuthContext";
 
 export function SignupForm() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [firmName, setFirmName] = React.useState("");
   const [name, setName] = React.useState("");
   const [surname, setSurnameName] = React.useState("");
@@ -59,8 +61,8 @@ export function SignupForm() {
         setError(data.error ?? "Unable to create your account.");
         return;
       }
+      await refreshUser();
       router.replace("/onboarding");
-      router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

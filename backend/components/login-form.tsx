@@ -19,6 +19,7 @@ import { AuthSchema } from "@/lib/schema";
 import { useAuth } from "@/context/AuthContext";
 
 export function LoginForm() {
+  const { refreshUser } = useAuth();
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -46,6 +47,7 @@ export function LoginForm() {
         setError(data.error ?? "Unable to sign in.");
         return;
       }
+      await refreshUser();
       router.replace("/dashboard");
       router.refresh();
     } catch {

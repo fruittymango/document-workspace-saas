@@ -13,22 +13,6 @@ export const AuthSchema = z.object({
     .string({ message: "Password is required" })
     .trim()
     .min(5, { message: "Password must be atleast 5 characters" }),
-  // .refine(
-  //   (val) => {
-  //     return validator.isStrongPassword(val, {
-  //     //   minLength: 5,
-  //     //   minLowercase: 1,
-  //     //   minUppercase: 1,
-  //     //   minNumbers: 1,
-  //     //   minSymbols: 1,
-  //       returnScore: true,
-  //     });
-  //   },
-  //   {
-  //     message:
-  //       "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.",
-  //   },
-  // ),
 });
 
 // Define the shape of valid data
@@ -52,23 +36,7 @@ export const SignupSchema = z.object({
   password: z
     .string({ message: "Password is required" })
     .trim()
-    .max(5, { message: "Password must be atleast 5 characters" }),
-  // .refine(
-  //   (val) => {
-  //     return validator.isStrongPassword(val, {
-  //     //   minLength: 5,
-  //     //   minLowercase: 1,
-  //     //   minUppercase: 1,
-  //     //   minNumbers: 1,
-  //     //   minSymbols: 1,
-  //       returnScore: true,
-  //     });
-  //   },
-  //   {
-  //     message:
-  //       "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.",
-  //   },
-  // ),
+    .min(5, { message: "Password must be atleast 5 characters" }),
 });
 
 export const NewUserSchema = z.object({
@@ -92,22 +60,6 @@ export const NewUserSchema = z.object({
     .string({ message: "Password is required" })
     .trim()
     .min(5, { message: "Password must be atleast 5 characters" }),
-  // .refine(
-  //   (val) => {
-  //     return validator.isStrongPassword(val, {
-  //     //   minLength: 5,
-  //     //   minLowercase: 1,
-  //     //   minUppercase: 1,
-  //     //   minNumbers: 1,
-  //     //   minSymbols: 1,
-  //       returnScore: true,
-  //     });
-  //   },
-  //   {
-  //     message:
-  //       "Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.",
-  //   },
-  // ),
 });
 
 export const DocumentSchema = z.object({

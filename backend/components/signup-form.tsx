@@ -139,7 +139,7 @@ export function SignupForm() {
               id="password"
               type="password"
               autoComplete="new-password"
-              placeholder="At least 8 characters"
+              placeholder="At least 5 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

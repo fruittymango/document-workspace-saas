@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  users           User[]
+  documents       Document[]
+  tenantLicenses  TenantLicense[]
+  licensePayments LicensePayment[]
+  roles           Role[]
+  userRoles       UserRole[]
+
+  @@map("tenants")
+}
+
+model User {
+  id           String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String
+  surname      String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userRoles UserRole[]
+
+  @@map("users")
+}
+
+model Document {
+  id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String         @map("tenant_id") @db.Uuid
+  title     String
+  statusId  String         @map("status_id") @db.Uuid
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  status DocumentStatus @relation(fields: [statusId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("documents")
+}
+
+model DocumentStatus {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  status    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  documents       Document[]
+  @@map("document_status")
+}
+
+// ── Licensing / plans ─────────────────────────────────
+
+enum LicenseStatus {
+  trialing
+  active
+  past_due
+  cancelled
+  expired
+
+  @@map("license_status")
+}
+
+enum BillingInterval {
+  monthly
+  annual
+
+  @@map("billing_interval")
+}
+
+enum PaymentStatus {
+  pending
+  complete
+  failed
+  cancelled
+
+  @@map("payment_status")
+}
+
+model Plan {
+  id              String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  code            String           @unique
+  name            String
+  description     String?
+  priceCents      Int              @map("price_cents")
+  seatLimit       Int              @map("seat_limit")
+  documentLimit   Int              @map("document_limit")
+  currency        String           @default("ZAR")
+  billingInterval BillingInterval  @default(monthly) @map("billing_interval")
+  isActive        Boolean          @default(true) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @default(now()) @updatedAt @map("updated_at")
+
+  tenantLicenses  TenantLicense[]
+  licensePayments LicensePayment[]
+
+  @@map("plans")
+}
+
+model TenantLicense {
+  id                  String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId            String        @map("tenant_id") @db.Uuid
+  planId              String        @map("plan_id") @db.Uuid
+  status              LicenseStatus @default(trialing)
+  currentPeriodStart  DateTime      @map("current_period_start")
+  currentPeriodEnd    DateTime      @map("current_period_end")
+  cancelAtPeriodEnd   Boolean       @default(false) @map("cancel_at_period_end")
+  trialEndsAt         DateTime?     @map("trial_ends_at")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan            Plan             @relation(fields: [planId], references: [id], onDelete: Restrict)
+  licensePayments LicensePayment[]
+
+  @@index([tenantId])
+  @@index([currentPeriodEnd])
+  // NOTE: the partial unique index (one active license per tenant) isn't expressible
+  // in the Prisma schema DSL — it stays hand-written in the migration.sql as:
+  // CREATE UNIQUE INDEX ... WHERE status IN ('trialing','active','past_due')
+  @@map("tenant_licenses")
+}
+
+model LicensePayment {
+  id              String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId        String        @map("tenant_id") @db.Uuid
+  tenantLicenseId String?       @map("tenant_license_id") @db.Uuid
+  planId          String        @map("plan_id") @db.Uuid
+  mPaymentId      String        @unique @map("m_payment_id")
+  pfPaymentId     String?       @map("pf_payment_id")
+  amountCents     Int           @map("amount_cents")
+  currency        String        @default("ZAR")
+  status          PaymentStatus @default(pending)
+  rawItnPayload   Json?         @map("raw_itn_payload")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantLicense TenantLicense? @relation(fields: [tenantLicenseId], references: [id], onDelete: SetNull)
+  plan          Plan           @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId])
+  @@map("license_payments")
+}
+
+// ── Roles & permissions (RBAC) ────────────────────────
+
+model Permission {
+  id          String  @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  code        String  @unique
+  screen      String
+  description String?
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model Role {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  tenantId  String?  @map("tenant_id") @db.Uuid
+  code      String
+  name      String
+  isSystem  Boolean  @default(true) @map("is_system")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+
+  // Partial unique indexes (system vs tenant-scoped code uniqueness) stay
+  // hand-written in migration.sql — Prisma DSL can't express the WHERE clause.
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId    String   @map("user_id") @db.Uuid
+  roleId    String   @map("role_id") @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([tenantId])
+  @@map("user_roles")
+}

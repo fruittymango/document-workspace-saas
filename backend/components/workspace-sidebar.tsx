@@ -50,14 +50,24 @@ function initials(name: string) {
 }
 
 const NAV_ITEMS = [
-  { title: "Dashboard", href: "/dashboard", icon: IconDashboard },
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: IconDashboard,
+    requiresRole: ["owner", "admin"],
+  },
   { title: "Documents", href: "/documents", icon: IconFiles },
-  { title: "Users", href: "/users", icon: IconUsers, requiresRole: ["owner"] },
+  {
+    title: "Users",
+    href: "/users",
+    icon: IconUsers,
+    requiresRole: ["owner", "admin"],
+  },
   {
     title: "Billing",
     href: "/billing",
     icon: IconCreditCard,
-    requiresRole: ["admin"],
+    requiresRole: ["admin", "owner"],
   },
 ];
 

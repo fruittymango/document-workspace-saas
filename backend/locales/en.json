@@ -1,0 +1,15 @@
+{
+  "common": {
+    "welcome": "Welcome back",
+    "logout": "Log Out"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "IN_REVIEW": "In Review",
+    "APPROVED": "Approved",
+    "ARCHIVED": "Archived"
+  },
+  "errors": {
+    "unauthenticated": "Secure session context missing."
+  }
+}

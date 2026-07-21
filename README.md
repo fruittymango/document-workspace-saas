@@ -41,13 +41,13 @@ Create a `.env` file in the project root.
 | `MIGRATION_DATABASE_URL`   | Database connection used for Prisma migrations. Typically connects with elevated privileges. |
 | `DATABASE_URL`             | Primary application database connection used by Prisma Client.                               |
 | `PROD_APP_PASSWORD`        | Password used by the application database user in production.                                |
-| `PROD_MIGRATION_PASSWORD`  | Password used by the migration database user in production.                                  |
+| `PROD_MIGRATION_PASSWORD`  | Password used by the migration database user in with elevated privileges.                    |
 | `PROD_SYSTEM_PASSWORD`     | Password used by the system/administrative database user in production.                      |
 | `JWT_SECRET`               | Secret used to sign and verify JWT tokens.                                                   |
 | `UPSTASH_REDIS_REST_URL`   | Upstash Redis REST endpoint (for example: `https://....upstash.io`).                         |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST authentication token.                                                     |
 | `APP_URL`                  | Base URL of the application (for example `http://localhost:3000`).                           |
-| `PAYFAST_MODE`             | PayFast environment (use: `https://sandbox.payfast.co.za/eng/process`).                      |
+| `PAYFAST_MODE`             | PayFast environment (use: `https://sandbox.payfast.co.za`).                                  |
 | `PAYFAST_MERCHANT_ID`      | PayFast merchant ID.                                                                         |
 | `PAYFAST_MERCHANT_KEY`     | PayFast merchant key.                                                                        |
 | `PAYFAST_URL`              | PayFast endpoint URL.                                                                        |

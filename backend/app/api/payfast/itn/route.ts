@@ -62,10 +62,15 @@ async function upsertTenantLicense(
  * creates and/or updates a license upon successful verification.
  */
 export async function POST(req: NextRequest) {
-  const raw = await req.text();
-  const params = Object.fromEntries(new URLSearchParams(raw));
+  const formData = await req.formData();
+  const payload: Record<string, string> = {};
+  const payfastValidationParams = new URLSearchParams();
 
-  const idempotencyKey = `payfast:${params.m_payment_id}`;
+  formData.forEach((value, key) => {
+    payload[key] = value.toString();
+    payfastValidationParams.append(key, value.toString());
+  });
+  const idempotencyKey = `payfast:${payload.m_payment_id}`;
 
   let session;
   try {
@@ -80,7 +85,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const validSig = validatePayfastSignature(
-      params,
+      payload,
       process.env.PAYFAST_PASSPHRASE,
     );
     if (!validSig) throw new Error("Invalid signature");
@@ -90,30 +95,29 @@ export async function POST(req: NextRequest) {
     const validateRes = await fetch(`${host}/eng/query/validate`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: raw,
+      body: payfastValidationParams.toString(),
     });
     const validateBody = await validateRes.text();
     if (validateBody.trim() !== "VALID")
       throw new Error("PayFast validation rejected ITN");
 
     const payment = await db.licensePayment.findUniqueOrThrow({
-      where: { mPaymentId: params.m_payment_id },
+      where: { mPaymentId: payload.m_payment_id },
       include: { plan: true },
     });
 
-    const expectedAmount = (payment.amountCents / 100).toFixed(2);
-    if (params.amount_gross !== expectedAmount)
+    const expectedAmount = payment.amountCents.toFixed(2);
+    if (payload.amount_gross !== expectedAmount)
       throw new Error("Amount mismatch");
 
-    // 4. Apply the result
-    if (params.payment_status === "COMPLETE") {
+    if (payload.payment_status === "COMPLETE") {
       await db.$transaction(async (tx) => {
         await tx.licensePayment.update({
           where: { id: payment.id },
           data: {
             status: "complete",
-            pfPaymentId: params.pf_payment_id,
-            rawItnPayload: params,
+            pfPaymentId: payload.pf_payment_id,
+            rawItnPayload: payload,
           },
         });
 
@@ -151,7 +155,7 @@ export async function POST(req: NextRequest) {
     } else {
       await db.licensePayment.update({
         where: { id: payment.id },
-        data: { status: "failed", raw_itn_payload: params },
+        data: { status: "failed", raw_itn_payload: payload },
       });
     }
 

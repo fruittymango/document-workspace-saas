@@ -46,10 +46,29 @@ export function buildPayfastPayment(fields: PayfastFields) {
 }
 
 export function validatePayfastSignature(
-  postedFields: Record<string, string>,
+  data: Record<string, string>,
   passphrase?: string,
 ) {
-  const { signature, ...rest } = postedFields;
-  const expected = generateSignature(rest, passphrase);
-  return expected === signature;
+  const receivedSignature = data["signature"];
+  if (!receivedSignature) return false;
+
+  const scratchData = { ...data };
+  delete scratchData["signature"];
+
+  const paramString = Object.keys(scratchData)
+    .map(
+      (key) =>
+        `${key}=${encodeURIComponent(scratchData[key]).replace(/%20/g, "+")}`,
+    )
+    .join("&");
+
+  const finalString = passphrase
+    ? `${paramString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, "+")}`
+    : paramString;
+
+  const generatedSignature = crypto
+    .createHash("md5")
+    .update(finalString)
+    .digest("hex");
+  return generatedSignature === receivedSignature;
 }

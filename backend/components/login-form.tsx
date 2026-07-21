@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { demoFirms, demoUsers } from "@/lib/utils";
 import { AuthSchema } from "@/lib/schema";
+import { useAuth } from "@/context/AuthContext";
 
 export function LoginForm() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export function LoginForm() {
         return;
       }
       router.replace("/dashboard");
+      router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SignupSchema } from "@/lib/schema";
+import { useAuth } from "@/context/AuthContext";
 
 export function SignupForm() {
   const router = useRouter();

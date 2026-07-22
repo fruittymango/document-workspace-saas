@@ -135,7 +135,10 @@ export function WorkspaceSidebar() {
                     isActive={isActive}
                     tooltip={item.title}
                   >
-                    <Link href={item.href}>
+                    <Link
+                      href={item.href}
+                      data-testid={"nav-" + item.href.replace("/", "")}
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

@@ -86,6 +86,7 @@ export function LoginForm() {
               type="email"
               autoComplete="email"
               placeholder="you@firm.com"
+              data-testid="login-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -97,6 +98,7 @@ export function LoginForm() {
               id="password"
               type="password"
               autoComplete="current-password"
+              data-testid="login-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -104,12 +106,21 @@ export function LoginForm() {
           </div>
 
           {error ? (
-            <p role="alert" className="text-sm text-destructive">
+            <p
+              role="alert"
+              data-testid="login-error"
+              className="text-sm text-destructive"
+            >
               {error}
             </p>
           ) : null}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            data-testid="login-submit"
+            className="w-full"
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <IconLoader2 className="size-4 animate-spin" />
@@ -150,6 +161,7 @@ export function LoginForm() {
                 <button
                   key={account.email}
                   type="button"
+                  data-testid={"login-user-" + index}
                   onClick={() => useDemo(account.email)}
                   className="flex items-center justify-between rounded px-2 py-1 text-left text-sm transition-colors hover:bg-accent"
                 >

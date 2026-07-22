@@ -160,6 +160,7 @@ export function DocumentsView() {
             <Input
               type="search"
               placeholder="Search by title…"
+              data-testid="documents-search"
               className="pl-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -169,7 +170,7 @@ export function DocumentsView() {
 
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button data-testid="create-document">
                 <IconFilePlus className="size-4" />
                 New document
               </Button>
@@ -186,6 +187,7 @@ export function DocumentsView() {
                   <Label htmlFor="doc-title">Title</Label>
                   <Input
                     id="doc-title"
+                    data-testid="create-document-title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Q4 Financial Statements"
@@ -202,7 +204,11 @@ export function DocumentsView() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={creating || !title.trim()}>
+                  <Button
+                    type="submit"
+                    data-testid="create-document-submit"
+                    disabled={creating || !title.trim()}
+                  >
                     {creating ? (
                       <>
                         <IconLoader2 className="size-4 animate-spin" />
@@ -251,10 +257,13 @@ export function DocumentsView() {
                   );
                   const busy = pendingId === doc.id;
                   return (
-                    <TableRow key={doc.id}>
+                    <TableRow key={doc.id} data-testid="document-row">
                       <TableCell className="font-[400]">{doc.title}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT[doc.status.status]}>
+                        <Badge
+                          data-testid="status-badge"
+                          variant={STATUS_VARIANT[doc.status.status]}
+                        >
                           {STATUS_LABELS[doc.status.status]}
                         </Badge>
                       </TableCell>

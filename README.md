@@ -79,6 +79,14 @@ Create a `.env` file in the project root.
 
 # Database Setup
 
+## Create Roles
+
+```bash
+npm run seed:roles
+```
+
+---
+
 ## Apply Migrations
 
 ```bash
@@ -105,7 +113,7 @@ Examples include:
 
 ---
 
-## 2. Role Creation (Required)
+## 2. Role Creation (bot required if you have already ran: npm run seed:roles)
 
 The role creation script is separate from the standard Prisma seed.
 
@@ -132,7 +140,7 @@ Unlike demo data, this script is intended for operational database setup and sho
 
 ---
 
-## 3. Demo Data
+## Demo Data
 
 Demo/sample data is seeded using Prisma's standard seed mechanism.
 

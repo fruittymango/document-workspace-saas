@@ -1,6 +1,20 @@
-# Project Name
+# Docu-Fin — Multi-Tenant Document Workspace
 
-A minimal multi-tenant “Document Workspace” for accounting firms. Each firm (tenant) has users who log in and work only with their firm’s documents.
+A multi-tenant document workspace for accounting firms, built as a technical vetting submission. See SOLUTION.md for the full design rationale, trade-offs, and API contract.
+
+## Project structure
+
+```
+.
+├── backend/           # Next.js app — the complete client-facing implementation
+│                      # (API routes + UI screens) for this submission
+├── frontend/          # React + Vite — scaffolded placeholder only, not
+│                      # built out yet (see frontend/README.md and
+│                      # SOLUTION.md 8 for why)
+├── e2e/               # Playwright end-to-end tests (see e2e/README.md)
+├── SOLUTION.md
+└── README.md          # this file
+```
 
 ## Tech Stack
 
@@ -8,8 +22,16 @@ A minimal multi-tenant “Document Workspace” for accounting firms. Each firm 
 - **Database:** PostgreSQL
 - **ORM:** Prisma
 - **Authentication:** JWT
-- **Caching:** Upstash Redis
-- **Payments:** PayFast
+- **An Upstash Redis database** — used for rate limiting and idempotency
+  (see [SOLUTION.md 5.3–5.5](./SOLUTION.md#53-rate-limiting-upstash-redis)).
+  Upstash is HTTP-based, so a local `docker-compose` Redis container isn't a
+  drop-in substitute — create a free Upstash database at
+  [upstash.com](https://upstash.com) and use its REST URL/token, including
+  for local development. (Credentials are provided with the env)
+- **PayFast sandbox merchant credentials** — for the billing/checkout flow.
+  Sign up for a PayFast sandbox account at
+  [sandbox.payfast.co.za](https://sandbox.payfast.co.za) if you don't
+  already have test credentials in your env.
 
 ---
 
@@ -52,10 +74,6 @@ Create a `.env` file in the project root.
 | `PAYFAST_MERCHANT_KEY`     | PayFast merchant key.                                                                        |
 | `PAYFAST_URL`              | PayFast endpoint URL.                                                                        |
 | `PAYFAST_PASSPHRASE`       | PayFast passphrase.                                                                          |
-
-> **Important**
->
-> Never commit your `.env` file or production credentials to source control.
 
 ---
 
@@ -128,6 +146,19 @@ Unlike demo data, this script is intended for operational database setup and sho
 
 ---
 
+## Seeded demo accounts
+
+After seeding, two tenants exist specifically to demonstrate tenant
+isolation — logging in as one and confirming you cannot see the other's
+documents is the fastest way to sanity-check the core requirement:
+
+| Tenant                  | Email                | Password    |
+| ----------------------- | -------------------- | ----------- |
+| `Bossman Trading`       | `themba@bossman.com` | `octro@123` |
+| `Beacon Carrim Pty Ltd` | `carol@carrim.com`   | `octro@123` |
+
+---
+
 # Running the Application
 
 ```bash
@@ -173,19 +204,6 @@ npm run start
 
 ---
 
-# Production Deployment
-
-Recommended deployment order:
-
-1. Configure production environment variables.
-2. Run Prisma migrations.
-3. Execute the role creation script.
-4. Start the application.
-
-Demo data should **not** be seeded in production unless explicitly required.
-
----
-
 # Project Scripts
 
 Typical scripts may include:
@@ -199,6 +217,43 @@ npx prisma db seed     # Seed demo data
 npx prisma migrate dev
 npx prisma migrate deploy
 ```
+
+---
+
+# End-to-end tests (Playwright)
+
+See [`e2e/README.md`](./e2e/README.md) for full setup. Quick version:
+
+```bash
+npm install -D @playwright/test
+npx playwright install --with-deps chromium
+npx playwright test
+```
+
+Requires the app running (locally or via Docker) and seeded (optionally the
+`E2E_*` environment variables from `e2e/README.md` pointing at your demo
+accounts above).
+
+# Troubleshooting
+
+- **`PrismaClientInitializationError` / schema out of sync** — run
+  `npx prisma generate` after pulling changes that touch
+  `prisma/schema.prisma`, and re-run `npx prisma migrate deploy` if new
+  migrations were added.
+- **Port already in use** — `[document your actual ports; e.g. "another
+process on 3000/5432 — stop it or change PORT / docker-compose's port
+mapping."]`
+- **PayFast webhook never fires locally** — PayFast needs a **publicly
+  reachable URL** to POST its callback to; `localhost` isn't reachable from
+  PayFast's servers. For local testing, tunnel your local server with
+  something like `ngrok http 3000 --host-header="localhost:3000"` (or Cloudflare Tunnel, since Cloudflare
+  is already in the stack) and point your PayFast sandbox app's webhook URL
+  at the tunnel's public address instead of `localhost`.
+- **Upstash rate limiting errors on every request** — double-check
+  `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` are for an actual
+  Upstash database, not a local Redis instance — the client speaks
+  Upstash's REST protocol, not the standard Redis wire protocol, so a local
+  `redis-server` won't respond correctly even on the right port.
 
 ---
 

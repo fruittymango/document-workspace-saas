@@ -9,19 +9,16 @@
     "lint": "next lint",
     "seed:roles": "tsx lib/worker.ts",
     "seed:demo": "prisma db seed",
-    "migrate": "prisma migrate dev", 
-
-    "docker:build":"docker build -t acsono/document-workspace-local:latest",
-    "docker:run":"docker run --name document-workspace-local --env-file .env -p 9000:9000 --restart unless-stopped acsono/document-workspace-local:latest",
-    "docker:run:it":"docker run -it --rm --env-file .env -p 9000:9000 acsono/document_workspace:latest",
-
-    "prod:migrate": "dotenv -e .env.production -- prisma migrate deploy", 
+    "migrate": "prisma migrate dev",
+    "docker:build": "docker build -t acsono/document-workspace-local:latest",
+    "docker:run": "docker run --name document-workspace-local --env-file .env -p 9000:9000 --restart unless-stopped acsono/document-workspace-local:latest",
+    "docker:run:it": "docker run -it --rm --env-file .env -p 9000:9000 acsono/document_workspace:latest",
+    "prod:migrate": "dotenv -e .env.production -- prisma migrate deploy",
     "prod:seed": "dotenv -e .env.production -- prisma db seed",
-    "prod:seed:roles":"dotenv -e .env.production -- tsx lib/worker.ts",
-
-    "prod:docker:build":"docker build -t acsono/document-workspace-prod:latest",
-    "prod:docker:run":"docker run --name document-workspace-prod --env-file .env.production -p 9000:9000 --restart unless-stopped acsono/document-workspace-prod:latest",
-    "prod:docker:run:it":"docker run -it --rm --env-file .env.production -p 9000:9000 acsono/document_workspace-prod:latest"
+    "prod:seed:roles": "dotenv -e .env.production -- tsx lib/worker.ts",
+    "prod:docker:build": "docker build -t acsono/document-workspace-prod:latest",
+    "prod:docker:run": "docker run --name document-workspace-prod --env-file .env.production -p 9000:9000 --restart unless-stopped acsono/document-workspace-prod:latest",
+    "prod:docker:run:it": "docker run -it --rm --env-file .env.production -p 9000:9000 acsono/document_workspace-prod:latest"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -62,7 +59,6 @@
     "@tanstack/react-table": "^8.21.3",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
-    "@vercel/analytics": "^2.0.1",
     "autoprefixer": "^10.5.4",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
@@ -77,6 +73,7 @@
     "next": "16.2.10",
     "next-themes": "^0.4.6",
     "pg": "^8.22.0",
+    "postcss": "^8.5.21",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.4",
@@ -106,10 +103,12 @@
     "eslint-config-next": "16.2.10",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
-    "postcss": "^8.5.19",
     "prisma": "^7.8.0",
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "overrides": {
+    "sharp": "^0.35.3"
   }
 }

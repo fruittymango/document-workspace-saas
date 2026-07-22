@@ -6,7 +6,7 @@ This repository implements the Multi-Tenant Document Workspace described in
 the assignment brief, plus a set of extensions built on top of the core
 requirement.
 
-- **Backend**: Next.js ([App Router / Pages Router] — pick one), TypeScript,
+- **Backend**: Next.js (Pages Router), TypeScript,
   PostgreSQL. Implements both the REST API and the client-facing screens for
   this submission.
 - **Frontend**: a separate React + TypeScript (Vite) app, scaffolded but not
@@ -528,9 +528,7 @@ This is the requirement the brief weights most heavily ("Prevent
 cross-tenant data access at all times"), so it gets its own section rather
 than being folded into the schema notes.
 
-**Mechanism:** [Describe exactly what you did. Be specific — this is the
-section a reviewer will scrutinize hardest. Pick whichever is true and
-expand on it:]
+**Mechanism:**
 
 - _Middleware-derived scoping:_ every document/license/user query is
   scoped by a `tenantId` resolved from the authenticated session — never
@@ -578,10 +576,7 @@ from anything else in the request.
 here (no session store to keep in sync across serverless/edge functions),
 but that statelessness means a compromised or logged-out token can't be
 revoked instantly the way deleting a session row can — it's valid until it
-expires. [State what you did about this: short expiry + refresh token?
-A server-side denylist for the rare revoke case (logout, password change)?
-Or an accepted trade-off for this exercise's time box? Any of these is a
-reasonable answer — just be explicit about which one is true.]
+expires.
 
 ### 5.2 CORS & origin allowlisting
 
@@ -645,7 +640,7 @@ already in use" response, rather than both requests racing to `INSERT` and
 one of them surfacing a raw database unique-constraint error to the client.
 
 **Worth keeping regardless of the Redis lock:** a `UNIQUE` constraint on
-`(tenant_id, email)` (or globally on email, [confirm which]) at the
+`(tenant_id, email)` at the
 database level, as the authoritative backstop. The Redis claim is a fast,
 graceful _first line_ of defense that produces a clean error message and
 avoids the DB even being hit twice — but Redis isn't the system of record,
@@ -732,7 +727,7 @@ GET    /api/protected/users            -> tenant-scoped user list
 POST   /api/protected/users             { email, role } -> admin create
 GET    /api/protected/admin/stats      -> dashboard analytics
 GET    /api/protected/plans            -> available license plans
-POST   /api/protected/plans/checkout   -> creates order and payment request url [Idempotency-Key required — see §5.4]
+POST   /api/protected/plans/checkout   -> creates order and payment request url [Idempotency-Key required — see 5.4]
 GET    /api/protected/billing          -> current tenant's license/plan state
 POST   /api/payfast/                   -> PayFast callback — signature-verified,
                                    not CORS-protected (see 5.2); resolves
@@ -795,7 +790,7 @@ npm run dev
 Seeded data: `prisma/seed.ts` creates — at least one
 tenant, one user (with role), a license record, several
 documents across a couple of statuses — and the login credentials for the
-demo. See [§3.1](#31-data--seeding-strategy--two-deliberately-different-mechanisms)
+demo. See [3.1](#31-data--seeding-strategy--two-deliberately-different-mechanisms)
 for why this is split from the migration-applied lookup/enum data rather
 than combined into one seed step.
 

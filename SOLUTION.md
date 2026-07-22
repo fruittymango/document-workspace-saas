@@ -546,7 +546,7 @@ expand on it:]
 from anything the client controls (URL params, body fields) — always
 derived server-side from the authenticated session/token.
 
-**How this was verified:** An integration test confirms that tenant A's session
+**How this was verified:** An end to end integration test confirms that tenant A's session
 cannot list, read, or update tenant B's documents by ID, even when the ID is
 known/guessed.
 
@@ -585,7 +585,7 @@ reasonable answer — just be explicit about which one is true.]
 
 ### 5.2 CORS & origin allowlisting
 
-The API is configured with an explicit origin allowlist (`[your domain(s)]`)
+The API is configured with an explicit origin allowlist (`sandbox.payfast.co.za, process.env.APP_URL`)
 rather than a wildcard, combined with `credentials: true` since cookie-based
 auth requires it — a wildcard origin is incompatible with credentialed
 requests in any case.
@@ -804,7 +804,46 @@ than combined into one seed step.
 
 ---
 
-## 10. Trade-offs & what I'd do with more time
+## 10. Testing
+
+**End-to-end tests** — Playwright, at repo root in `e2e/` (deliberately not
+nested inside `backend/` or `frontend/`, since these tests exercise the
+whole running system through a browser rather than one package's
+internals — see `e2e/README.md`). Covers the brief's core objectives
+against known seeded demo accounts: login (success and failure), the
+document status lifecycle, search, and — the one weighted most heavily by
+the brief — tenant isolation proven through the actual rendered UI, not
+just at the API layer.
+
+Example — the login test doesn't stop at checking the URL changed, since a
+client-side redirect can update the address bar before the authenticated
+layout has actually rendered:
+
+```typescript
+test("logs in with a known seeded user and reaches the documents screen", async ({
+  page,
+}) => {
+  const login = new LoginPage(page);
+  await login.goto();
+
+  await login.login(TENANT_A_USER.email, TENANT_A_USER.password);
+
+  await expect(page.getByTestId("nav-documents")).toBeVisible();
+  await expect(page).toHaveURL(/\/documents/);
+});
+```
+
+Run with:
+
+```bash
+npx playwright test
+```
+
+See `e2e/README.md` for full setup and usage.
+
+---
+
+## 11. Trade-offs & what I'd do with more time
 
 Being honest about gaps is worth more here than pretending there are none:
 
@@ -816,9 +855,6 @@ Being honest about gaps is worth more here than pretending there are none:
 - Rate-limit thresholds for the API are initial guesses,
   not tuned against real traffic patterns — I'd want to revisit these with
   actual usage data before calling them production-ready.
-- No automated tests yet for tenant isolation — given more time, I'd
-  add integration tests specifically proving cross-tenant document/license
-  access fails, since that's the requirement graded most heavily.
 - PayFast webhook signature verification is implemented but not
   covered by a test for the tampered-payload case.
 - RBAC checks and tenant checks are both present but not fully implemented to extended the frontend etc.
@@ -856,7 +892,7 @@ per locale`) so every
 
 ---
 
-## 11. Why this approach, relative to the role
+## 12. Why this approach, relative to the role
 
 **Docu-Fin's own module list overlaps directly with what I built past the
 minimum**, not by coincidence: _Multi-tenancy_, _Document Management_,

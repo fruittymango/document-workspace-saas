@@ -115,8 +115,7 @@ export async function seed() {
       const newDocuments = seedDocs.map((value) => {
         return {
           ...value,
-          title:
-            owners[i].surname + " - " + value.title + "-" + owners[i].createdAt,
+          title: value.title + " - " + owners[i].email.split("@")[0],
           tenantId: owners[i].tenantId,
           statusId:
             statuses[Math.floor(Math.random() * (statuses.length - 1))].id,

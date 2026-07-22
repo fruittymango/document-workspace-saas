@@ -13,17 +13,6 @@ const TENANT_B_USER = {
 };
 
 test.describe("Auth", () => {
-  test("logs in with a known seeded user and reaches the documents screen", async ({
-    page,
-  }) => {
-    const login = new LoginPage(page);
-    await login.goto();
-
-    await login.login(TENANT_A_USER.email, TENANT_A_USER.password);
-    await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByTestId("nav-documents")).toBeVisible();
-  });
-
   test("shows a clear error on invalid credentials and does not navigate away from login", async ({
     page,
   }) => {

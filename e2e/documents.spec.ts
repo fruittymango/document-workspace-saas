@@ -20,8 +20,8 @@ test.describe("Auth", () => {
     await login.goto();
 
     await login.login(TENANT_A_USER.email, TENANT_A_USER.password);
-    await expect(page.getByTestId("nav-documents")).toBeVisible();
     await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page.getByTestId("nav-documents")).toBeVisible();
   });
 
   test("shows a clear error on invalid credentials and does not navigate away from login", async ({

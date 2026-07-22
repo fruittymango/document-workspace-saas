@@ -105,21 +105,7 @@ Examples include:
 
 ---
 
-## 2. Demo Data
-
-Demo/sample data is seeded using Prisma's standard seed mechanism.
-
-Run:
-
-```bash
-npx prisma db seed
-```
-
-This populates the database with sample entities suitable for development and testing.
-
----
-
-## 3. Role Creation (Required)
+## 2. Role Creation (Required)
 
 The role creation script is separate from the standard Prisma seed.
 
@@ -143,6 +129,20 @@ This script should be executed:
 - Whenever database roles need to be recreated
 
 Unlike demo data, this script is intended for operational database setup and should be considered part of the deployment process.
+
+---
+
+## 3. Demo Data
+
+Demo/sample data is seeded using Prisma's standard seed mechanism.
+
+Run:
+
+```bash
+npx prisma db seed
+```
+
+This populates the database with sample entities suitable for development and testing.
 
 ---
 
@@ -178,16 +178,16 @@ npm install
 
 2. Configure `.env`.
 
-3. Run database migrations.
-
-```bash
-npx prisma migrate dev
-```
-
-4. Create required database roles.
+3. Create required database roles.
 
 ```bash
 npm run seed:roles
+```
+
+4. Run database migrations.
+
+```bash
+npx prisma migrate dev
 ```
 
 5. Seed demo data (optional).
@@ -196,7 +196,15 @@ npm run seed:roles
 npx prisma db seed
 ```
 
-6. Start the application.
+6. Build the application.
+
+```bash
+npm run buil
+```
+
+---
+
+7. Start the application.
 
 ```bash
 npm run start

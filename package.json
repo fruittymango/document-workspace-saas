@@ -1,0 +1,21 @@
+{
+  "name": "octrotus_solution",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "dev": "npm run dev --prefix backend",
+    "build": "npm run build --prefix backend",
+    "start": "npm run start --prefix backend",
+    "seed:roles": "npm run seed:roles --prefix backend",
+    "seed:demo": "npm run seed:demo --prefix backend",
+    "migrate": "npm run migrate --prefix backend"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/node": "^26.1.1",
+    "typescript": "^5.5.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

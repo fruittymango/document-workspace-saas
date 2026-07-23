@@ -238,17 +238,14 @@ npx prisma migrate deploy
 
 # End-to-end tests (Playwright)
 
-See [`e2e/README.md`](./e2e/README.md) for full setup. Quick version:
+Lives at the repo root, not inside `backend/` or `frontend/` (see
+[Project structure](#project-structure)). Quick version:
 
 ```bash
-npm install -D @playwright/test
+npm install
 npx playwright install --with-deps chromium
-npx playwright test
+npm run test:e2e
 ```
-
-Requires the app running (locally or via Docker) and seeded (optionally the
-`E2E_*` environment variables from `e2e/README.md` pointing at your demo
-accounts above).
 
 # Troubleshooting
 
@@ -256,9 +253,9 @@ accounts above).
   `npx prisma generate` after pulling changes that touch
   `prisma/schema.prisma`, and re-run `npx prisma migrate deploy` if new
   migrations were added.
-- **Port already in use** — `[document your actual ports; e.g. "another
+- **Port already in use** — `e.g. "another
 process on 3000/5432 — stop it or change PORT / docker-compose's port
-mapping."]`
+mapping."`
 - **PayFast webhook never fires locally** — PayFast needs a **publicly
   reachable URL** to POST its callback to; `localhost` isn't reachable from
   PayFast's servers. For local testing, tunnel your local server with

@@ -113,7 +113,7 @@ Examples include:
 
 ---
 
-## 2. Role Creation (bot required if you have already ran: npm run seed:roles)
+## 2. Role Creation (both required if you have already ran: npm run seed:roles)
 
 The role creation script is separate from the standard Prisma seed.
 
@@ -167,7 +167,7 @@ documents is the fastest way to sanity-check the core requirement:
 
 ---
 
-# Running the Application
+# Running the Application (backend folder)
 
 ```bash
 npm run build
@@ -198,21 +198,27 @@ npm run seed:roles
 npx prisma migrate dev
 ```
 
-5. Seed demo data (optional).
+5. Generate database models (optional: only run for local development).
+
+```bash
+npx prisma generate
+```
+
+6. Seed demo data (optional: only run to seed demo data).
 
 ```bash
 npx prisma db seed
 ```
 
-6. Build the application.
+7. Build the application.
 
 ```bash
-npm run buil
+npm run build
 ```
 
 ---
 
-7. Start the application.
+8. Start the application.
 
 ```bash
 npm run start
@@ -225,13 +231,13 @@ npm run start
 Typical scripts may include:
 
 ```bash
+npm run seed:roles     # Create/update database roles
+npx prisma migrate dev
+npx prisma db seed     # Seed demo data
+npx prisma generate    # Create/update database models
 npm run dev            # Start development server
 npm run build          # Build application
 npm run start          # Start production server
-npm run seed:roles     # Create/update database roles
-npx prisma db seed     # Seed demo data
-npx prisma migrate dev
-npx prisma migrate deploy
 ```
 
 ---

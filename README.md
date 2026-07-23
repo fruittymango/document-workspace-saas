@@ -79,18 +79,18 @@ Create a `.env` file in the project root.
 
 # Database Setup
 
-## Apply Migrations
-
-```bash
-npx prisma migrate dev
-```
-
----
-
 ## Create Roles
 
 ```bash
 npm run seed:roles
+```
+
+---
+
+## Apply Migrations
+
+```bash
+npx prisma migrate dev
 ```
 
 ---

@@ -4,7 +4,7 @@
 
 This repository implements the Multi-Tenant Document Workspace described in
 the assignment brief, plus a set of extensions built on top of the core
-requirement.
+requirement.<a href="https://www.loom.com/share/900706163b994a2ab2ba3dfbb4c4dfde" target="_blank">(Project Walkthrough Video)</a>
 
 - **Backend**: Next.js (Pages Router), TypeScript,
   PostgreSQL. Implements both the REST API and the client-facing screens for

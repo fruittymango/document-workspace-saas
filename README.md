@@ -1,6 +1,6 @@
 # Docu-Fin — Multi-Tenant Document Workspace
 
-A multi-tenant document workspace for accounting firms, built as a technical vetting submission. See SOLUTION.md for the full design rationale, trade-offs, and API contract.
+A multi-tenant document workspace for accounting firms, built as a technical vetting submission. See SOLUTION.md for the full design rationale, trade-offs, and API contract.<a href="https://www.loom.com/share/900706163b994a2ab2ba3dfbb4c4dfde" target="_blank">(Project Walkthrough Video)</a>
 
 ## Project structure
 

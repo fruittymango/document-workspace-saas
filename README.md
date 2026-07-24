@@ -113,7 +113,7 @@ Examples include:
 
 ---
 
-## 2. Role Creation (both required if you have already ran: npm run seed:roles)
+## 2. Role Creation (not required if you have already ran: npm run seed:roles)
 
 The role creation script is separate from the standard Prisma seed.
 
